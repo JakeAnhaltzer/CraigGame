@@ -7,6 +7,7 @@ namespace UnityStandardAssets._2D
     {
         [SerializeField] private float m_MaxSpeed = 10f;                    // The fastest the player can travel in the x axis.
         [SerializeField] private float m_JumpForce = 400f;                  // Amount of force added when the player jumps.
+        [SerializeField] private float m_DJumpForce = 400f;                 // Force of second jump
         [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
         [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
@@ -19,6 +20,8 @@ namespace UnityStandardAssets._2D
         private Animator m_Anim;            // Reference to the player's animator component.
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+        private int jumpCount = 0;
+        public bool doubleJump = true; //Set to true when you unlock doublejump
 
         private void Awake()
         {
@@ -51,6 +54,8 @@ namespace UnityStandardAssets._2D
 
         public void Move(float move, bool crouch, bool jump)
         {
+            /*
+
             // If crouching, check to see if the character can stand up
             if (!crouch && m_Anim.GetBool("Crouch"))
             {
@@ -64,11 +69,13 @@ namespace UnityStandardAssets._2D
             // Set whether or not the character is crouching in the animator
             m_Anim.SetBool("Crouch", crouch);
 
+            */
+
             //only control the player if grounded or airControl is turned on
             if (m_Grounded || m_AirControl)
             {
                 // Reduce the speed if crouching by the crouchSpeed multiplier
-                move = (crouch ? move*m_CrouchSpeed : move);
+                //move = (crouch ? move*m_CrouchSpeed : move);
 
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
@@ -89,13 +96,25 @@ namespace UnityStandardAssets._2D
                     Flip();
                 }
             }
+
             // If the player should jump...
-            if (m_Grounded && jump && m_Anim.GetBool("Ground"))
+            if (jump && m_Grounded && m_Anim.GetBool("Ground"))
             {
                 // Add a vertical force to the player.
                 m_Grounded = false;
+                jumpCount = 1;
                 m_Anim.SetBool("Ground", false);
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+                DoubleJump(jump);
+            }
+        }
+
+        private void DoubleJump(bool jump)
+        {
+            if (jump && !m_Grounded && doubleJump && jumpCount == 1) //Should double jump if not on floor and all that but is jumping with double force instead.
+            {
+                jumpCount = 0;
+              //  m_Rigidbody2D.AddForce(new Vector2(0f, m_DJumpForce));
             }
         }
 
@@ -112,3 +131,21 @@ namespace UnityStandardAssets._2D
         }
     }
 }
+
+/*
+            // If the player should jump...
+            if (jump && jumpCount< 2)// && m_Anim.GetBool("Ground"))
+            {
+                // Add a vertical force to the player.
+                m_Grounded = false;
+                jumpCount++;
+                Debug.Log(jumpCount);
+                m_Anim.SetBool("Ground", false);
+                m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+            }
+            if (m_Grounded == true && jumpCount != 1)
+            {
+                jumpCount = 1;
+                Debug.Log("reset");
+            }
+            */
