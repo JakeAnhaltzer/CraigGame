@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class Health : MonoBehaviour {
 
-    int health;
-
-	// Use this for initialization
-	void Start () {
-        if (this.tag == "Enemy1")
-            health = 4;
-        else if (this.tag == "Player")
-            health = 5;
-	}
+    public int health; //Health is set in the unity editor per each object with health script
 	
 	public void getHit(int damage) //Need to call this from a script that deals with the colliders 
     {
