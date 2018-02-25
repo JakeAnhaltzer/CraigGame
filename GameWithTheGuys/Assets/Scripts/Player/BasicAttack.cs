@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BasicAttack : MonoBehaviour {
 
-    bool checkForAttack; //Used so you cant start an attack while mid attack
+    private bool checkForAttack; //Used so you cant start an attack while mid attack
+    public int playerDamageValue; //How much damage you do with basic attack. Update this when you upgrage weapon
 
     void Start () {
         weaponEnabled(false);
@@ -31,4 +32,11 @@ public class BasicAttack : MonoBehaviour {
         this.GetComponent<SpriteRenderer>().enabled = swap;
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Enemy")
+        {
+            other.GetComponent<Health>().getHit(playerDamageValue);
+        }
+    }
 }

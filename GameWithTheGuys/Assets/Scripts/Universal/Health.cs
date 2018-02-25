@@ -9,9 +9,9 @@ public class Health : MonoBehaviour {
 	public void getHit(int damage) //Need to call this from a script that deals with the colliders 
     {
         health -= damage;
-        if (health >= 0 && this.tag != "Player")
+        if (health <= 0 && this.tag != "Player")
             die();
-        else
+        else if ((health <= 0 && this.tag == "Player"))
             playerDie();
     }
 
